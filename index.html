@@ -13,7 +13,7 @@
   <style>
     :root {
       --ink:#152b38; --muted:#526775; --line:#dbe6e9; --bg:#f7fafb; --card:#ffffff; --tint:#eef4f5;
-      --teal:#00786a; --teal-bar:#00897a; --amber:#c2761f; --gray:#8c99a3; --blue:#4666a8;
+      --teal:#00786a; --teal-bar:#00897a; --amber:#c2761f; --gray:#8c99a3; --blue:#4666a8; --causal:#d9a07c;
     }
     * { box-sizing:border-box; }
     html { scroll-behavior:smooth; }
@@ -74,6 +74,20 @@
     .bar { height:26px; border-radius:0 4px 4px 0; background:var(--gray); }
     .bar.teal { background:var(--teal-bar); }
     .bar.amber { background:var(--amber); }
+    .bar.causal { background:var(--causal); }
+    .gpair { display:grid; gap:3px; }
+    .gpair .bar { height:16px; }
+    .gpair .bar-val { font-size:13px; }
+    details.appx { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:4px 22px; margin-top:12px; }
+    details.appx summary { cursor:pointer; font-weight:700; font-size:17px; padding:14px 0; }
+    details.appx[open] summary { border-bottom:1px solid var(--line); margin-bottom:14px; }
+    details.appx > :last-child { margin-bottom:18px; }
+    .videos { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px; margin-top:16px; }
+    .vpair { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px; }
+    .vpair .vids { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .vpair video { width:100%; border-radius:8px; display:block; background:#000; }
+    .vpair .tag { font-size:12px; font-weight:700; margin-top:4px; text-align:center; }
+    .ok { color:var(--teal); } .fail { color:#b4492b; }
     .bar-val { font-size:15px; font-variant-numeric:tabular-nums; }
     .bar-row.ours .bar-label, .bar-row.ours .bar-val { font-weight:700; }
     .legend { display:flex; flex-wrap:wrap; gap:16px; font-size:14px; margin-top:6px; }
@@ -119,6 +133,7 @@
 
   <div class="stats" role="list">
     <div class="stat" role="listitem"><b>87.5%</b><span>LIBERO-Plus, zero-shot</span><em>3 seeds, ± 0.7; +5.2 over the best prior VLA</em></div>
+    <div class="stat" role="listitem"><b>88.2%</b><span>+ language reasoning</span><em>training-only text stream, 3 seeds, ± 0.4</em></div>
     <div class="stat" role="listitem"><b>90.3%</b><span>Camera viewpoint shifts</span><em>best among policies without robot-action pretraining</em></div>
     <div class="stat" role="listitem"><b>98.4%</b><span>Clean LIBERO</span><em>robustness costs no clean success</em></div>
   </div>
@@ -156,17 +171,13 @@
 
   <section id="results">
     <h2>A 2B VLA matches 5B world-action models</h2>
-    <p>Zero-shot success on all 10,030 LIBERO-Plus episodes. Every policy is trained on the LIBERO demonstrations only.</p>
-    <div class="card">
-      <div class="bars" role="img" aria-label="LIBERO-Plus total success: our backbone without masking 78.6, Track4Action 82.3, ARPS 87.3, GIFT-WAM-IDM 87.8, CMSP plus future 87.5">
-        <div class="bar-row"><div class="bar-label">Our backbone, no masking<small>2B VLA</small></div><div class="bar-track"><div class="bar" style="width:78.6%"></div><span class="bar-val">78.6</span></div></div>
-        <div class="bar-row"><div class="bar-label">Track4Action, best prior VLA<small>2B VLA</small></div><div class="bar-track"><div class="bar" style="width:82.3%"></div><span class="bar-val">82.3</span></div></div>
-        <div class="bar-row"><div class="bar-label">ARPS<small>5B world-action model</small></div><div class="bar-track"><div class="bar amber" style="width:87.3%"></div><span class="bar-val">87.3</span></div></div>
-        <div class="bar-row"><div class="bar-label">GIFT-WAM-IDM<small>5B world-action model</small></div><div class="bar-track"><div class="bar amber" style="width:87.8%"></div><span class="bar-val">87.8</span></div></div>
-        <div class="bar-row ours"><div class="bar-label">CMSP + future (ours)<small>2B VLA</small></div><div class="bar-track"><div class="bar teal" style="width:87.5%"></div><span class="bar-val">87.5</span></div></div>
-      </div>
-      <div class="legend"><span><i style="background:var(--gray)"></i>VLA</span><span><i style="background:var(--amber)"></i>World-action model (video prior)</span><span><i style="background:var(--teal-bar)"></i>Ours</span></div>
+    <p>Zero-shot success on all 10,030 LIBERO-Plus episodes. Every policy is fine-tuned on the LIBERO demonstrations only; the right panel starts from policies pretrained on large robot datasets.</p>
+    <div class="two">
+      <div class="card"><h3>No robot-action pretraining</h3><p class="muted small">VLM or video model, then LIBERO only</p><div class="bars" role="img" aria-label="Fast-WAM† 70.8, Cosmos Policy 82.2, Track4Action 82.3, ARPS 87.3, CMSP + future (ours) 87.5, GIFT-WAM-IDM 87.8, CMSP + language reasoning (ours) 88.2"><div class="bar-row"><div class="bar-label">Fast-WAM†<small>5B world-action model</small></div><div class="bar-track"><div class="bar amber" style="width:41.6%"></div><span class="bar-val">70.8</span></div></div><div class="bar-row"><div class="bar-label">Cosmos Policy<small>2B world-action model</small></div><div class="bar-track"><div class="bar amber" style="width:64.4%"></div><span class="bar-val">82.2</span></div></div><div class="bar-row"><div class="bar-label">Track4Action<small>2B VLA, best prior VLA</small></div><div class="bar-track"><div class="bar " style="width:64.6%"></div><span class="bar-val">82.3</span></div></div><div class="bar-row"><div class="bar-label">ARPS<small>5B world-action model</small></div><div class="bar-track"><div class="bar amber" style="width:74.6%"></div><span class="bar-val">87.3</span></div></div><div class="bar-row ours"><div class="bar-label">CMSP + future (ours)<small>2B VLA</small></div><div class="bar-track"><div class="bar teal" style="width:75.0%"></div><span class="bar-val">87.5</span></div></div><div class="bar-row"><div class="bar-label">GIFT-WAM-IDM<small>5B world-action model</small></div><div class="bar-track"><div class="bar amber" style="width:75.6%"></div><span class="bar-val">87.8</span></div></div><div class="bar-row ours"><div class="bar-label">CMSP + language reasoning (ours)<small>2B VLA</small></div><div class="bar-track"><div class="bar teal" style="width:76.4%"></div><span class="bar-val">88.2</span></div></div></div></div>
+      <div class="card"><h3>With robot-action pretraining</h3><p class="muted small">robot datasets, then LIBERO</p><div class="bars" role="img" aria-label="π0 53.6, OpenVLA-OFT 69.6, π0.5, our fine-tune 86.8, π0.5 + CMSP (ours) 88.4, FLEX-π 88.5, V-JEPA Policy 91.5"><div class="bar-row"><div class="bar-label">π<sub>0</sub><small>3B VLA</small></div><div class="bar-track"><div class="bar " style="width:7.2%"></div><span class="bar-val">53.6</span></div></div><div class="bar-row"><div class="bar-label">OpenVLA-OFT<small>7B VLA</small></div><div class="bar-track"><div class="bar " style="width:39.2%"></div><span class="bar-val">69.6</span></div></div><div class="bar-row"><div class="bar-label">π<sub>0.5</sub>, our fine-tune<small>3B VLA, one seed</small></div><div class="bar-track"><div class="bar " style="width:73.6%"></div><span class="bar-val">86.8</span></div></div><div class="bar-row ours"><div class="bar-label">π<sub>0.5</sub> + CMSP (ours)<small>3B VLA, one seed</small></div><div class="bar-track"><div class="bar teal" style="width:76.8%"></div><span class="bar-val">88.4</span></div></div><div class="bar-row"><div class="bar-label">FLEX-π<small>5B world-action model</small></div><div class="bar-track"><div class="bar amber" style="width:77.0%"></div><span class="bar-val">88.5</span></div></div><div class="bar-row"><div class="bar-label">V-JEPA Policy<small>0.9B</small></div><div class="bar-track"><div class="bar " style="width:83.0%"></div><span class="bar-val">91.5</span></div></div></div></div>
     </div>
+    <div class="legend"><span><i style="background:var(--gray)"></i>VLA</span><span><i style="background:var(--amber)"></i>World-action model (video or image prior)</span><span><i style="background:var(--teal-bar)"></i>Ours</span><span class="muted">Bars start at 50%.</span></div>
+    <p class="note">Ours: mean of three training seeds (π<sub>0.5</sub> rows: one seed), evaluated with the perturbation name removed from the instruction. †Evaluated by the FLEX-π authors with the same corrected prompt. Other published rows use the released prompt. Language reasoning adds a text stream with task and phase descriptions during training only; it is masked at test time and never read.</p>
 
     <div class="table-wrap" style="margin-top:18px">
       <table>
@@ -177,44 +188,56 @@
           <tr><td>VLA-GSE</td><td>Qwen3-VL 4B</td><td>64.4</td><td>68.5</td><td>88.8</td><td>97.3</td><td>97.3</td><td>79.4</td><td>82.6</td><td>81.2</td></tr>
           <tr class="ours"><td>CMSP (ours)</td><td>Qwen3-VL 2B</td><td>89.9</td><td>68.2</td><td>89.2</td><td>94.0</td><td>92.6</td><td>95.0</td><td>83.1</td><td>87.0 ± 1.2</td></tr>
           <tr class="ours"><td>CMSP + future (ours)</td><td>Qwen3-VL 2B</td><td>90.3</td><td>69.0</td><td>89.9</td><td>94.7</td><td>92.0</td><td>96.1</td><td>83.4</td><td>87.5 ± 0.7</td></tr>
+          <tr class="ours"><td>CMSP + language reasoning (ours)</td><td>Qwen3-VL 2B</td><td>89.3</td><td>77.2</td><td>88.1</td><td>94.9</td><td>93.9</td><td>94.6</td><td>82.7</td><td>88.2 ± 0.4</td></tr>
           <tr class="group"><td colspan="10">World-action models (pretrained video or image models), no robot-action pretraining</td></tr>
+          <tr><td>Fast-WAM†</td><td>Wan2.2 5B</td><td>48.4</td><td>75.7</td><td>66.8</td><td>96.6</td><td>68.5</td><td>70.1</td><td>76.5</td><td>70.8</td></tr>
+          <tr><td>Cosmos Policy</td><td>Cosmos-Predict2 2B</td><td>75.8</td><td>63.3</td><td>81.7</td><td>96.5</td><td>88.9</td><td>92.7</td><td>82.2</td><td>82.2</td></tr>
           <tr><td>GIFT-WAM-IDM</td><td>Wan2.2 5B</td><td>78.7</td><td>80.5</td><td>90.2</td><td>99.0</td><td>89.2</td><td>97.2</td><td>83.3</td><td>87.8</td></tr>
           <tr><td>ARPS</td><td>Wan2.2 5B</td><td>88.6</td><td>62.8</td><td>97.8</td><td>97.5</td><td>91.5</td><td>95.0</td><td>81.8</td><td>87.3</td></tr>
           <tr class="group"><td colspan="10">With robot-action pretraining</td></tr>
           <tr><td>π<sub>0.5</sub>, our fine-tune*</td><td>PaliGemma 3B</td><td>81.2</td><td>82.6</td><td>82.9</td><td>97.5</td><td>98.0</td><td>84.6</td><td>87.3</td><td>86.8</td></tr>
           <tr class="ours"><td>π<sub>0.5</sub> + CMSP (+ future)*</td><td>PaliGemma 3B</td><td>93.5</td><td>71.5</td><td>84.8</td><td>97.5</td><td>93.4</td><td>95.6</td><td>85.7</td><td>88.4</td></tr>
+          <tr><td>FLEX-π (world-action model)†</td><td>Wan2.2 5B</td><td>89.1</td><td>72.7</td><td>84.5</td><td>94.6</td><td>96.3</td><td>98.9</td><td>87.3</td><td>88.5</td></tr>
         </tbody>
-        <caption>Success (%). Ours: mean over three training seeds, evaluated with the perturbation name removed from the instruction. *One seed. Published baselines use the released evaluation prompt.</caption>
+        <caption>Success (%). Ours: mean over three training seeds. *One seed. †Corrected prompt, evaluated by the FLEX-π authors. All other published rows use the released prompt. The full table with 29 policies is in the appendix below.</caption>
       </table>
     </div>
+  </section>
+
+  <section id="rollouts" hidden>
+    <h2>Rollouts</h2>
   </section>
 
   <section id="ablations">
     <h2>Masking carries most of the gain, prediction adds on top</h2>
     <div class="two">
       <div class="card">
-        <h3>Points gained per step</h3>
-        <p class="muted small">LIBERO-Plus, bidirectional encoder, 3 seeds</p>
-        <div class="bars" role="img" aria-label="Gains: camera dropout +6.0 to 84.6, masks on every modality +1.1 to 85.7, cross-modal prediction +1.3 to 87.0, future latents +0.5 to 87.5">
-          <div class="bar-row"><div class="bar-label">+ camera dropout<small>78.6 → 84.6</small></div><div class="bar-track"><div class="bar" style="width:85%"></div><span class="bar-val">+6.0</span></div></div>
-          <div class="bar-row"><div class="bar-label">+ masks on every modality<small>85.7</small></div><div class="bar-track"><div class="bar" style="width:15.6%"></div><span class="bar-val">+1.1</span></div></div>
-          <div class="bar-row ours"><div class="bar-label">+ cross-modal prediction<small>87.0 (CMSP)</small></div><div class="bar-track"><div class="bar teal" style="width:18.4%"></div><span class="bar-val">+1.3</span></div></div>
-          <div class="bar-row"><div class="bar-label">+ future latents<small>87.5</small></div><div class="bar-track"><div class="bar teal" style="width:7.1%"></div><span class="bar-val">+0.5</span></div></div>
+        <h3>LIBERO-Plus, causal VLM vs bidirectional encoder</h3>
+        <p class="muted small">Success (%), 3 seeds, same embodied pretraining data. Bars start at 70%.</p>
+        <div class="legend" style="margin:0 0 4px"><span><i style="background:var(--causal)"></i>Causal VLM</span><span><i style="background:var(--teal-bar)"></i>Bidirectional encoder (ours)</span></div>
+        <div class="bars" role="img" aria-label="Causal versus bidirectional: no masking 77.9 vs 78.6, camera dropout 84.6 vs 84.6, masks 85.7 bidirectional, CMSP 83.1 vs 87.0, future 87.5, language reasoning 88.2">
+          <div class="bar-row"><div class="bar-label">No masking<small></small></div><div class="gpair"><div class="bar-track"><div class="bar causal" style="width:39.5%"></div><span class="bar-val">77.9</span></div><div class="bar-track"><div class="bar teal" style="width:43.0%"></div><span class="bar-val">78.6</span></div></div></div><div class="bar-row"><div class="bar-label">+ camera dropout<small>causal: one seed</small></div><div class="gpair"><div class="bar-track"><div class="bar causal" style="width:73.0%"></div><span class="bar-val">84.6</span></div><div class="bar-track"><div class="bar teal" style="width:73.0%"></div><span class="bar-val">84.6</span></div></div></div><div class="bar-row"><div class="bar-label">+ masks on every modality<small></small></div><div class="gpair"><div class="bar-track"><span class="bar-val muted small">causal: not run</span></div><div class="bar-track"><div class="bar teal" style="width:78.5%"></div><span class="bar-val">85.7</span></div></div></div><div class="bar-row"><div class="bar-label">+ cross-modal prediction<small>= CMSP</small></div><div class="gpair"><div class="bar-track"><div class="bar causal" style="width:65.5%"></div><span class="bar-val">83.1</span></div><div class="bar-track"><div class="bar teal" style="width:85.0%"></div><span class="bar-val">87.0</span></div></div></div><div class="bar-row"><div class="bar-label">+ future latents<small></small></div><div class="gpair"><div class="bar-track"><span class="bar-val muted small">causal: not run</span></div><div class="bar-track"><div class="bar teal" style="width:87.5%"></div><span class="bar-val">87.5</span></div></div></div><div class="bar-row"><div class="bar-label">+ language reasoning<small>on CMSP, no future latents</small></div><div class="gpair"><div class="bar-track"><span class="bar-val muted small">causal: not run</span></div><div class="bar-track"><div class="bar teal" style="width:91.0%"></div><span class="bar-val">88.2</span></div></div></div>
         </div>
-        <p class="note">Prediction adds 1.3 points over masking alone, positive in each of the three seeds (+2.4, +0.7, +0.9).</p>
+        <p class="note">On the bidirectional encoder, prediction adds 1.3 points over masking alone, positive in each of the three seeds (+2.4, +0.7, +0.9). On the causal VLM a masked camera cannot read the tokens that follow it, and CMSP stays below plain camera dropout.</p>
       </div>
       <div class="card">
-        <h3>Prediction needs bidirectional attention</h3>
+        <h3>Clean LIBERO is not hurt</h3>
+        <p class="muted small">Success (%) on the four unperturbed suites, 50 episodes per task (2,000 per policy)</p>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Backbone</th><th></th><th>No masking</th><th>CMSP</th></tr></thead>
+            <thead><tr><th>Policy</th><th></th><th>Spatial</th><th>Object</th><th>Goal</th><th>Long</th><th>Avg.</th></tr></thead>
             <tbody>
-              <tr class="ours"><td>Bidirectional encoder</td><td></td><td>78.6 ± 1.1</td><td>87.0 ± 1.2</td></tr>
-              <tr><td>Causal, same pretraining data</td><td></td><td>77.9 ± 0.9</td><td>83.1 ± 0.5</td></tr>
+              <tr><td>Causal, no masking</td><td></td><td>98.8</td><td>99.2</td><td>97.6</td><td>93.8</td><td>97.3</td></tr>
+              <tr><td>Bidirectional, no masking</td><td></td><td>97.2</td><td>99.0</td><td>96.4</td><td>92.6</td><td>96.3</td></tr>
+              <tr><td>+ camera dropout</td><td></td><td>98.6</td><td>99.2</td><td>99.4</td><td>91.4</td><td>97.2</td></tr>
+              <tr><td>+ masks on every modality</td><td></td><td>98.8</td><td>100.0</td><td>97.6</td><td>93.2</td><td>97.4</td></tr>
+              <tr class="ours"><td>+ cross-modal prediction (CMSP)</td><td></td><td>98.8</td><td>99.8</td><td>98.4</td><td>95.6</td><td>98.2</td></tr>
+              <tr class="ours"><td>+ future latents</td><td></td><td>99.0</td><td>99.8</td><td>99.2</td><td>95.6</td><td>98.4</td></tr>
+              <tr class="ours"><td>CMSP + language reasoning</td><td></td><td></td><td></td><td></td><td>93.2</td><td>97.6</td></tr>
             </tbody>
+            <caption>Seed 42, except language reasoning: mean of three seeds (97.65 / 97.45 / 97.65; per-suite numbers only logged for the long suite).</caption>
           </table>
         </div>
-        <p class="note">On the causal backbone, a masked camera cannot read the tokens that follow it, and CMSP stays below camera dropout alone (84.6, one seed), mostly on robot initial states.</p>
       </div>
     </div>
   </section>
@@ -250,11 +273,74 @@
     <h2>Limitations</h2>
     <div class="card">
       <ul class="plain">
-        <li>Unseen robot start poses remain the weakest perturbation (69.0%). Robot-pretrained policies and video priors handle them better (GIFT-WAM-IDM: 80.5%).</li>
+        <li>Unseen robot start poses remain the weakest perturbation (69.0%). Language reasoning in training lifts them to 77.2%, still below video priors and robot-pretrained policies (GIFT-WAM-IDM: 80.5%).</li>
         <li>Masking explains most of the robustness gain. Prediction adds a smaller, consistent gain on LIBERO-Plus but not on the matched RoboCasa wrist test.</li>
-        <li>All experiments are in simulation, with two backbones and one seed beyond LIBERO-Plus.</li>
+        <li>All experiments are in simulation, with two backbones and one seed beyond LIBERO-Plus. A future-only baseline (future prediction without present-input prediction) is still missing.</li>
       </ul>
     </div>
+  </section>
+
+  <section id="appendix">
+    <h2>Appendix</h2>
+    <details class="appx">
+      <summary>Full LIBERO-Plus comparison (29 policies)</summary>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Method</th><th>Initialization</th><th>Cam.</th><th>Robot</th><th>Lang.</th><th>Light</th><th>Backgr.</th><th>Noise</th><th>Layout</th><th>Total</th></tr></thead>
+        <tbody><tr class="group"><td colspan="10">VLAs (VLM initialization), no robot-action pretraining</td></tr><tr><td>StarVLA-α</td><td>Qwen3-VL 4B</td><td>48.7</td><td>63.4</td><td>86.8</td><td>95.8</td><td>94.6</td><td>75.0</td><td>80.2</td><td>76.1</td></tr><tr><td>Qwen-RobotManip, scratch</td><td>Qwen3.5 4B</td><td>70.4</td><td>44.9</td><td>88.1</td><td>95.8</td><td>95.5</td><td>84.4</td><td>79.1</td><td>78.3</td></tr><tr><td>GIFT-VLA</td><td>Qwen3-VL 4B</td><td>57.7</td><td>63.7</td><td>88.6</td><td>98.5</td><td>96.9</td><td>82.5</td><td>80.3</td><td>79.6</td></tr><tr><td>VLA-GSE</td><td>Qwen3-VL 4B</td><td>64.4</td><td>68.5</td><td>88.8</td><td>97.3</td><td>97.3</td><td>79.4</td><td>82.6</td><td>81.2</td></tr><tr><td>Track4Action</td><td>Qwen3.5 2B</td><td>76.6</td><td>60.7</td><td>87.1</td><td>96.3</td><td>96.1</td><td>88.4</td><td>78.7</td><td>82.3</td></tr><tr><td>VLANeXt‡</td><td>Qwen3-VL 2B</td><td>90.4</td><td>65.7</td><td>81.8</td><td>95.9</td><td>82.5</td><td>94.1</td><td>80.8</td><td>84.2</td></tr><tr class="ours"><td>CMSP (ours)*</td><td>Qwen3-VL 2B</td><td>89.9</td><td>68.2</td><td>89.2</td><td>94.0</td><td>92.6</td><td>95.0</td><td>83.1</td><td>87.0 ± 1.2</td></tr><tr class="ours"><td>CMSP + future (ours)*</td><td>Qwen3-VL 2B</td><td>90.3</td><td>69.0</td><td>89.9</td><td>94.7</td><td>92.0</td><td>96.1</td><td>83.4</td><td>87.5 ± 0.7</td></tr><tr class="ours"><td>CMSP + language reasoning (ours)*</td><td>Qwen3-VL 2B</td><td>89.3</td><td>77.2</td><td>88.1</td><td>94.9</td><td>93.9</td><td>94.6</td><td>82.7</td><td>88.2 ± 0.4</td></tr><tr class="group"><td colspan="10">World-action models (pretrained video or image models), no robot-action pretraining</td></tr><tr><td>Fast-WAM*†</td><td>Wan2.2 5B</td><td>48.4</td><td>75.7</td><td>66.8</td><td>96.6</td><td>68.5</td><td>70.1</td><td>76.5</td><td>70.8</td></tr><tr><td>Cosmos Policy</td><td>Cosmos-Predict2 2B</td><td>75.8</td><td>63.3</td><td>81.7</td><td>96.5</td><td>88.9</td><td>92.7</td><td>82.2</td><td>82.2</td></tr><tr><td>ImageWAM</td><td>FLUX.2 9B</td><td>79.8</td><td>58.7</td><td>95.2</td><td>96.1</td><td>91.2</td><td>93.3</td><td>83.1</td><td>84.6</td></tr><tr><td>ImageWAM + LIT</td><td>FLUX.2 9B</td><td>84.6</td><td>60.2</td><td>90.1</td><td>98.0</td><td>94.2</td><td>97.6</td><td>83.7</td><td>86.1</td></tr><tr><td>ARPS</td><td>Wan2.2 5B</td><td>88.6</td><td>62.8</td><td>97.8</td><td>97.5</td><td>91.5</td><td>95.0</td><td>81.8</td><td>87.3</td></tr><tr><td>GIFT-WAM-IDM</td><td>Wan2.2 5B</td><td>78.7</td><td>80.5</td><td>90.2</td><td>99.0</td><td>89.2</td><td>97.2</td><td>83.3</td><td>87.8</td></tr><tr><td>W2-VLA§</td><td>Qwen3-VL 4B</td><td>72.9</td><td>71.9</td><td>90.3</td><td>97.5</td><td>90.4</td><td>88.0</td><td>82.7</td><td>84.0</td></tr><tr class="group"><td colspan="10">VLAs and world-action models with robot-action pretraining</td></tr><tr><td>π<sub>0</sub></td><td>PaliGemma 3B</td><td>13.8</td><td>6.0</td><td>58.8</td><td>85.0</td><td>81.4</td><td>79.0</td><td>68.9</td><td>53.6</td></tr><tr><td>OpenVLA-OFT</td><td>Llama-2 7B</td><td>56.4</td><td>31.9</td><td>79.5</td><td>88.7</td><td>93.3</td><td>75.8</td><td>74.2</td><td>69.6</td></tr><tr><td>π<sub>0.5</sub>* (eval. by FLEX-π authors)</td><td>PaliGemma 3B</td><td>76.0</td><td>75.9</td><td>85.8</td><td>96.9</td><td>95.9</td><td>88.9</td><td>86.6</td><td>85.7</td></tr><tr><td>π<sub>0.5</sub>, our fine-tune*</td><td>PaliGemma 3B</td><td>81.2</td><td>82.6</td><td>82.9</td><td>97.5</td><td>98.0</td><td>84.6</td><td>87.3</td><td>86.8</td></tr><tr class="ours"><td>π<sub>0.5</sub> + CMSP (+ future), ours*</td><td>PaliGemma 3B</td><td>93.5</td><td>71.5</td><td>84.8</td><td>97.5</td><td>93.4</td><td>95.6</td><td>85.7</td><td>88.4</td></tr><tr><td>Multi-view VLA + AML</td><td>Qwen3-VL 4B</td><td>89.6</td><td>60.1</td><td>86.9</td><td>98.0</td><td>95.7</td><td>97.2</td><td>78.2</td><td>85.7</td></tr><tr><td>ZimaBlue (world-action model)</td><td>Wan2.2 5B</td><td>58.1</td><td>88.9</td><td>91.5</td><td>98.0</td><td>91.5</td><td>93.1</td><td>86.1</td><td>85.9</td></tr><tr><td>ERVLA</td><td>Qwen3-VL 4B</td><td>77.2</td><td>75.3</td><td>87.1</td><td>95.1</td><td>94.7</td><td>92.3</td><td>86.4</td><td>86.2</td></tr><tr><td>FLEX-π (world-action model)*</td><td>Wan2.2 5B</td><td>89.1</td><td>72.7</td><td>84.5</td><td>94.6</td><td>96.3</td><td>98.9</td><td>87.3</td><td>88.5</td></tr><tr><td>Qwen-RobotManip</td><td>Qwen3.5 4B</td><td>87.2</td><td>75.5</td><td>85.6</td><td>96.6</td><td>97.7</td><td>97.7</td><td>87.3</td><td>89.0</td></tr><tr><td>QuoVLA</td><td>PaliGemma 3B (π<sub>0.5</sub>)</td><td>82.3</td><td>87.6</td><td>88.2</td><td>98.2</td><td>95.9</td><td>90.8</td><td>89.3</td><td>89.7</td></tr><tr><td>Hermite-VLA</td><td>PaliGemma 3B (π<sub>0.5</sub>)</td><td>89.2</td><td>85.4</td><td>87.3</td><td>97.7</td><td>96.7</td><td>93.8</td><td>89.9</td><td>90.9</td></tr><tr><td>V-JEPA Policy</td><td>V-JEPA 2.1 0.9B</td><td>79.6</td><td>93.0</td><td>94.6</td><td>97.4</td><td>95.8</td><td>95.3</td><td>87.9</td><td>91.5</td></tr></tbody>
+        <caption>Zero-shot success (%), every row trained on the standard LIBERO demonstrations only. Total: episode-weighted over 10,030 episodes. *Corrected prompt (perturbation name removed from the instruction); all other published rows use the released prompt. Ours: mean of seeds 42, 43, 44 (π<sub>0.5</sub> rows: one seed). †Evaluated by the FLEX-π authors. ‡Per-suite models. §Aligns to frozen V-JEPA features.</caption>
+      </table></div>
+    </details>
+    <details class="appx">
+      <summary>Inference cost</summary>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Policy</th><th>Encoder tokens</th><th>Batch 1, median (p90) ms</th><th>Batch 8, ms</th><th>Peak memory, GiB</th></tr></thead>
+        <tbody>
+          <tr><td>Qwen, no masking</td><td>174</td><td>129 (146)</td><td>218</td><td>8.93</td></tr>
+          <tr class="ours"><td>Qwen + CMSP</td><td>174</td><td>124 (131)</td><td>213</td><td>9.00</td></tr>
+          <tr class="ours"><td>Qwen + CMSP + future</td><td>306</td><td>129 (137)</td><td>299</td><td>9.25</td></tr>
+          <tr><td>π<sub>0.5</sub></td><td></td><td>163 (178)</td><td>296</td><td>7.42</td></tr>
+          <tr class="ours"><td>π<sub>0.5</sub> + CMSP + future</td><td></td><td>138 (140)</td><td>349</td><td>8.15</td></tr>
+        </tbody>
+        <caption>Time per action chunk on one GH200, bf16, real LIBERO frames, 100 timed calls after 10 warm-up calls. CMSP adds nothing at inference: no masks, no EMA target, the predictors are dropped. Future slots add 132 tokens, free at batch 1 and +40% at batch 8.</caption>
+      </table></div>
+    </details>
+    <details class="appx">
+      <summary>Training details</summary>
+      <p><b>Embodied pretraining.</b> All 28 text layers of Qwen3-VL-2B are copied into a bidirectional encoder and a causal decoder (following T5Gemma). The encoder-decoder trains for one epoch on 6.72M embodied and spatial question-answer pairs with next-token prediction on the answers: AdamW, learning rate 3×10<sup>-5</sup>, 3% warm-up, cosine decay to 10%, sequences up to 4,096 tokens, 147,456 tokens per step on 16 GH200 GPUs. The vision encoder stays frozen. Only the encoder is kept for the policy.</p>
+      <p><b>CMSP.</b> A masked camera is set to zero after normalization; masked state or instruction tokens are replaced by learned mask embeddings. The target is an EMA copy of the VLM (momentum 0.995) that reads the unmasked sample without gradient. Per modality, a predictor (LayerNorm, linear to 2048, GELU, zero-initialized linear) maps the masked positions to the target's tokens. The loss is a per-channel normalized MSE with weight 0.05 next to the action loss. Future slots regress how each camera's layer-16 target latents change from frame t to t+8.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th></th><th>LIBERO (Qwen)</th><th>RoboCasa (Qwen)</th><th>LIBERO (π<sub>0.5</sub>)</th></tr></thead>
+        <tbody>
+          <tr><td>Initialization</td><td>converted encoder</td><td>converted encoder</td><td>π<sub>0.5</sub> base</td></tr>
+          <tr><td>Training data</td><td>4 LIBERO suites, 40 tasks</td><td>18 atomic RoboCasa365 tasks</td><td>4 LIBERO suites, 40 tasks</td></tr>
+          <tr><td>Cameras, resolution</td><td>agent + wrist, 224²</td><td>left agent + wrist, 256²</td><td>agent + wrist, 224²</td></tr>
+          <tr><td>Actions, chunk</td><td>7-d delta EEF, 8</td><td>12-d arm and base, 16 (execute 8)</td><td>7-d delta EEF, 8</td></tr>
+          <tr><td>Batch, steps</td><td>32, 50k</td><td>64, 70k (10k / 40k CMSP / 20k)</td><td>32, 50k</td></tr>
+          <tr><td>Camera mask rate</td><td>0.5</td><td>0.3</td><td>0.5</td></tr>
+          <tr><td>Prediction layer</td><td>16 of 28</td><td>16 of 28</td><td>10 of 18</td></tr>
+          <tr><td>Seeds</td><td>42, 43, 44</td><td>42</td><td>42</td></tr>
+        </tbody>
+        <caption>All policies: AdamW (β = 0.9, 0.95), 1k warm-up, cosine decay to 10<sup>-6</sup>, learning rates 10<sup>-5</sup> (VLM), 10<sup>-4</sup> (action head), 2.5×10<sup>-5</sup> (mask embeddings, predictors). Action head: GR00T-style flow-matching transformer, 12 layers, width 768, 4 integration steps. One node with four GH200 GPUs per policy.</caption>
+      </table></div>
+    </details>
+    <details class="appx">
+      <summary>Embodied pretraining mixture</summary>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Source</th><th>Content</th><th>Rows</th><th>Share</th></tr></thead>
+        <tbody>
+          <tr><td>Embodied-R1.5</td><td>grounding, pointing, grasp points, visual traces, robot QA</td><td>2,875,832</td><td>42.8%</td></tr>
+          <tr><td>Molmo2-ER</td><td>spatial and multi-view reasoning</td><td>932,097</td><td>13.9%</td></tr>
+          <tr><td>LLaVA-OneVision</td><td>general VQA and OCR</td><td>860,370</td><td>12.8%</td></tr>
+          <tr><td>SenseNova-SI</td><td>metric size, distance, spatial relations</td><td>832,132</td><td>12.4%</td></tr>
+          <tr><td>LLaVA-OneVision-2 spatial</td><td>multi-image spatial and referring QA</td><td>678,546</td><td>10.1%</td></tr>
+          <tr><td>EO-Data1.5M</td><td>object referring, point and trajectory QA</td><td>262,051</td><td>3.9%</td></tr>
+          <tr><td>SPARC robot frames</td><td>grounding, placement points, trajectories on OXE, BridgeData, DROID, AgiBot World</td><td>210,502</td><td>3.1%</td></tr>
+          <tr><td>RoboPoint</td><td>spatial affordance points</td><td>53,412</td><td>0.8%</td></tr>
+          <tr><td>FSD</td><td>spatial relations and visual traces</td><td>12,221</td><td>0.2%</td></tr>
+          <tr><td><b>Total</b></td><td>38 public datasets</td><td><b>6,717,163</b></td><td>100%</td></tr>
+        </tbody>
+      </table></div>
+    </details>
   </section>
 
   <section id="poster">
